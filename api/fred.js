@@ -1,17 +1,17 @@
-// /api/fred — Vercel serverless proxy for FRED API v2
+// /api/fred — Vercel serverless proxy for FRED API
 //
 // Why this exists:
-//   - FRED API v2 (launched Nov 2025) requires an API key sent as a Bearer token.
 //   - The browser cannot call FRED directly because (a) you'd leak your key, and
 //     (b) FRED does not send permissive CORS headers.
 //   - This function adds the key server-side and re-emits the data as JSON
-//     with CORS open, in the shape { series: [{date, value}, ...] } that the
-//     dashboard's fetchFRED_live() expects.
+//     with CORS open, in the shape { series: { <seriesId>: [{date, value}, ...] } }
+//     that the dashboard's fetchFRED_live() expects.
 //
 // Setup:
 //   1. Get a free FRED API key at https://fredaccount.stlouisfed.org/apikeys
 //   2. In Vercel: Project Settings → Environment Variables → add
 //        FRED_API_KEY = <your 32-char key>
+//      Make sure it's enabled for Production, Preview, AND Development.
 //   3. Redeploy.
 //
 // Usage from frontend:
@@ -37,11 +37,14 @@ export default async function handler(req, res) {
     });
   }
 
-  // FRED v2 series/observations endpoint
+  // FRED series/observations endpoint.
+  // Pass api_key as a query param (works for both v1 and v2 endpoints)
+  // AND as a Bearer token (v2 spec). Belt and suspenders.
   const params = new URLSearchParams({
     series_id: series,
     file_type: 'json',
     observation_start: start || '2000-01-01',
+    api_key: apiKey,
   });
   const url = `https://api.stlouisfed.org/fred/series/observations?${params}`;
 
