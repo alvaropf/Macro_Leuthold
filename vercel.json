@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "public": true,
+  "trailingSlash": false,
+  "functions": {
+    "api/fred.js": { "maxDuration": 10 },
+    "api/yahoo.js": { "maxDuration": 10 }
+  }
+}

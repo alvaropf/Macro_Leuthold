@@ -1,0 +1,10 @@
+{
+  "name": "dl-macro-dashboard",
+  "version": "1.0.0",
+  "description": "Live macro dashboard with FRED + Yahoo Finance data, deployed via Vercel serverless functions.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
